@@ -17,12 +17,15 @@ from utils.callbacks import get_callbacks
             
 def train(config : TrainingConfig):
 
-    
+    print('ok')
+
     processor = WhisperProcessor.from_pretrained(f"openai/whisper-{config.whisper_model}",language=config.language,task=config.task)
     
     # Dataset & collator
     train_dataset, eval_dataset=load_datasets(config)
     collator = WhisperCollator(processor, include_filenames=False, remove_forbidden_keys=True)
+
+    print('ok2')
 
     # Model 
     #Adapt the model with Lora

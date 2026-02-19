@@ -25,7 +25,7 @@ PROJECT_ROOT="/home/tleludec/Transcription_whisper/Code/fine-tuning-whisper/Scri
 # Construire les chemins absolus
 LOG_DIR="$SCRIPT_DIR/logs"
 
-RANKS=(2 4 8)
+RANKS=(1)
 
 for R in "${RANKS[@]}"; do
     echo "=============================================="
