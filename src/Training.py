@@ -60,7 +60,11 @@ def train(config : TrainingConfig):
         eval_strategy="epoch",
         logging_strategy="epoch",
         learning_rate=config.learning_rate,
-        fp16=True,
+        bf16=True,
+        fp16=False,
+        dataloader_num_workers=16,  # or more depending on CPU
+        # optionally pin memory
+        dataloader_pin_memory=True,
         predict_with_generate=True,
         report_to=["wandb"], # Active logging WER automatiquement
         metric_for_best_model="eval_wer",
