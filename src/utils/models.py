@@ -1,6 +1,5 @@
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 from peft import PeftModel, get_peft_model, IA3Config
-import torch
 
 
 def load_base_model(model_name, processor):
@@ -9,8 +8,8 @@ def load_base_model(model_name, processor):
     """
     model = WhisperForConditionalGeneration.from_pretrained(
         f"openai/whisper-{model_name}",
-        torch_dtype=torch.float16,  # Add this for consistency
-        low_cpu_mem_usage=True,     # Add this for memory efficiency
+        # Use single-GPU / auto device placement
+        device_map="auto"  # We'll handle device placement in Trainer
     )
 
     # Set generation config for transcription
