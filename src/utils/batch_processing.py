@@ -31,6 +31,40 @@ def load_datasets(cfg) -> Tuple[Dataset, Dataset]:
 
     return train_dataset, eval_dataset
 
+from typing import Any, List, Dict
+import torch
+from dataclasses import dataclass
+
+@dataclass
+class WhisperCollatorFast:
+    include_filenames: bool = False
+    remove_forbidden_keys: bool = False
+
+    def __call__(self, features: List[Dict]) -> Dict[str, torch.Tensor]:
+        # Stack input features
+        input_features = torch.stack([f["input_features"] for f in features])
+
+        # Pad labels (already tensor) to same length, padding_value=-100
+        labels = torch.nn.utils.rnn.pad_sequence(
+            [f["labels"] for f in features], batch_first=True, padding_value=-100
+        )
+
+        batch_out = {
+            "input_features": input_features,
+            "labels": labels
+        }
+
+        # Remove forbidden keys if needed
+        if self.remove_forbidden_keys:
+            for bad_key in ["input_ids", "input_values"]:
+                batch_out.pop(bad_key, None)
+
+        # Optionally include filenames
+        if self.include_filenames:
+            batch_out["filenames"] = [f.get("filename", None) for f in features]
+
+        return batch_out
+
 
 @dataclass
 class WhisperCollator:

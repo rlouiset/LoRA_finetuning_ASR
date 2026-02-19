@@ -8,7 +8,7 @@ import argparse
 import shutil
 from utils.metrics import normalized_ponctuation,make_compute_metrics
 from utils.seed import set_seed
-from utils.batch_processing import WhisperCollator, WhisperFeaturesDataset,load_datasets
+from utils.batch_processing import WhisperCollator, WhisperFeaturesDataset,load_datasets, WhisperCollatorFast
 from utils.models import load_lora_model, load_base_model, prepare_lora_for_training
 from utils.config import TrainingConfig, ALLOWED_MODULES
 from utils.callbacks import get_callbacks
@@ -23,7 +23,13 @@ def train(config : TrainingConfig):
     
     # Dataset & collator
     train_dataset, eval_dataset=load_datasets(config)
-    collator = WhisperCollator(processor, include_filenames=False, remove_forbidden_keys=True)
+    # collator = WhisperCollator(processor, include_filenames=False, remove_forbidden_keys=True)
+
+    # Replace old collator
+    collator = WhisperCollatorFast(
+        include_filenames=False,
+        remove_forbidden_keys=True
+    )
 
     print('ok2')
 
@@ -40,7 +46,7 @@ def train(config : TrainingConfig):
     print("CUDA device count:", torch.cuda.device_count())
 
     model.print_trainable_parameters()  # Print trainable parameters
-    model.config.use_cache=False
+    model.config.use_cache=True
     
     # Metrics
     metric=evaluate.load("wer")
