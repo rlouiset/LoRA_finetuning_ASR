@@ -96,7 +96,6 @@ def train(config : TrainingConfig):
 
 
 if __name__ == "__main__":
-     
     
     parser=argparse.ArgumentParser(description="Fine-tune Whisper Large with LoRA")
     parser.add_argument("--config", type=str, required=True, help="config yaml")
@@ -108,6 +107,8 @@ if __name__ == "__main__":
 
     
     args =parser.parse_args()
+
+    print("main")
     
     #YAML loading
     cfg=TrainingConfig(args.config)
