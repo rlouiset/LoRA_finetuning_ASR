@@ -40,7 +40,7 @@ def prepare_ia3_for_training(config, processor):
     # IA3 configuration
     ia3_config = IA3Config(
         target_modules=config.target_modules,  # e.g., ["q_proj", "v_proj"]
-        task_type="SEQ_2_SEQ_LM",              # required for Hugging Face seq2seq
+        # task_type="SEQ_2_SEQ_LM",              # required for Hugging Face seq2seq
         feedforward_modules=["fc1", "fc2"],           # MLP layers in Whisper
     )
 
