@@ -23,29 +23,29 @@ def train(config: TrainingConfig):
         language=config.language,
         task=config.task
     )
-
-    # Fix pad token to avoid attention mask warnings
-    processor.tokenizer.pad_token_id = processor.tokenizer.eos_token_id
-
+    # Fix pad token properly
+    if processor.tokenizer.pad_token is None:
+        processor.tokenizer.pad_token = processor.tokenizer.eos_token
+        processor.tokenizer.pad_token_id = processor.tokenizer.eos_token_id
     # -------------------------
     # Dataset & Collator
     # -------------------------
     train_dataset, eval_dataset = load_datasets(config)
-
     collator = WhisperCollatorFast(
         include_filenames=False,
         remove_forbidden_keys=True
     )
-
     # -------------------------
     # Model (IA³ adapters)
     # -------------------------
     model = prepare_ia3_for_training(config, processor)
 
-    print("Using device:", "cuda" if torch.cuda.is_available() else "cpu")
+    # Ensure model is on the right device
+    if torch.cuda.is_available():
+        model = model.cuda()
+    print("Using device:", next(model.parameters()).device)
     print("CUDA available:", torch.cuda.is_available())
     print("CUDA device count:", torch.cuda.device_count())
-
     model.print_trainable_parameters()
     model.config.use_cache = False
 
@@ -81,7 +81,7 @@ def train(config: TrainingConfig):
         load_best_model_at_end=True,
         greater_is_better=False,
         save_total_limit=3,
-        remove_unused_columns=False,
+        remove_unused_columns=True,
     )
 
     # -------------------------

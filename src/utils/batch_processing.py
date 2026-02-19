@@ -54,16 +54,17 @@ class WhisperCollatorFast:
             "labels": labels
         }
 
-        # Remove forbidden keys if needed
-        if self.remove_forbidden_keys:
-            for bad_key in ["input_ids", "input_values"]:
-                batch_out.pop(bad_key, None)
+        # Explicitly remove any forbidden keys that might cause issues
+        forbidden_keys = ["input_ids", "input_values", "attention_mask", "decoder_input_ids"]
+        for key in forbidden_keys:
+            batch_out.pop(key, None)
 
         # Optionally include filenames
         if self.include_filenames:
             batch_out["filenames"] = [f.get("filename", None) for f in features]
 
         return batch_out
+
 
 
 @dataclass
