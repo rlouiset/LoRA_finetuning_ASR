@@ -19,6 +19,9 @@ def load_datasets(cfg) -> Tuple[Dataset, Dataset]:
     train_dir = Path(cfg.features_dir) / "train"
     eval_dir = Path(cfg.features_dir) / "eval"
 
+    print(train_dir)
+    print(eval_dir)
+
     train_dataset = WhisperFeaturesDataset(train_dir)
     eval_dataset = WhisperFeaturesDataset(eval_dir)
 
