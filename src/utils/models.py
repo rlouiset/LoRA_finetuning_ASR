@@ -9,7 +9,7 @@ def load_base_model(model_name, processor):
     model = WhisperForConditionalGeneration.from_pretrained(
         f"openai/whisper-{model_name}",
         # Use single-GPU / auto device placement
-        device_map=None  # We'll handle device placement in Trainer
+        device_map="auto"  # We'll handle device placement in Trainer
     )
 
     # Set generation config for transcription
