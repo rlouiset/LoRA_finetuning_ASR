@@ -85,8 +85,6 @@ def train(config : TrainingConfig):
     # Copy it to a clean directory
     if best_ckpt is not None:
         shutil.copytree(best_ckpt, f"best_model_lora_rank_{config.lora_r}", dirs_exist_ok=True)
-        
-    
 
 
 if __name__ == "__main__":

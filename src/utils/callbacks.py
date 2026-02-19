@@ -9,6 +9,7 @@ class CsvWERLoggerCallback(TrainerCallback):
     """
     def __init__(self, csv_path="wer_log.csv"):
         self.csv_path = csv_path
+        print(self.csv_path)
         # Create CSV file with header if it does not exist
         if not os.path.exists(self.csv_path):
             with open(self.csv_path, mode="w", newline="", encoding="utf-8") as f:
