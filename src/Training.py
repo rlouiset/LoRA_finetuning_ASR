@@ -30,9 +30,12 @@ def train(config : TrainingConfig):
     model = prepare_lora_for_training(config, processor)
     model.to(device)
 
+    print("Using device:", device)
+    print("CUDA available:", torch.cuda.is_available())
+    print("CUDA device count:", torch.cuda.device_count())
+
     model.print_trainable_parameters()  # Print trainable parameters
     model.config.use_cache=False
-    
     
     # Metrics
     metric=evaluate.load("wer")
@@ -98,7 +101,6 @@ if __name__ == "__main__":
     parser.add_argument("--lora_rank", type=int, default=None, help="LoRA rank")
     parser.add_argument("--test_evaluation",type=bool, default=None, help="Evaluate on a small subset of the eval set for quick testing")
 
-    
     
     args =parser.parse_args()
     
