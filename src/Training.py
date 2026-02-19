@@ -32,7 +32,7 @@ def train(config : TrainingConfig):
     #Adapt the model with Lora
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = prepare_lora_for_training(config, processor)
-    model.to(device)
+    # model.to(device)
 
     print("Using device:", device)
     print("CUDA available:", torch.cuda.is_available())
