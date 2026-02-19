@@ -16,9 +16,6 @@ from utils.callbacks import get_callbacks
 
             
 def train(config : TrainingConfig):
-
-    print('ok')
-
     processor = WhisperProcessor.from_pretrained(f"openai/whisper-{config.whisper_model}",language=config.language,task=config.task)
     
     # Dataset & collator
@@ -31,15 +28,11 @@ def train(config : TrainingConfig):
         remove_forbidden_keys=True
     )
 
-    print('ok2')
-
     # Model 
     #Adapt the model with Lora
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = prepare_lora_for_training(config, processor)
     model.to(device)
-
-    print('')
 
     print("Using device:", device)
     print("CUDA available:", torch.cuda.is_available())
@@ -66,9 +59,8 @@ def train(config : TrainingConfig):
         eval_strategy="epoch",
         logging_strategy="epoch",
         learning_rate=config.learning_rate,
-        bf16=True,
-        fp16=False,
-        dataloader_num_workers=16,  # or more depending on CPU
+        fp16=True,
+        dataloader_num_workers=32,  # or more depending on CPU
         # optionally pin memory
         dataloader_pin_memory=True,
         predict_with_generate=True,
