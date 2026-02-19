@@ -81,7 +81,7 @@ def train(config: TrainingConfig):
         load_best_model_at_end=True,
         greater_is_better=False,
         save_total_limit=3,
-        remove_unused_columns=True,
+        remove_unused_columns=False,
     )
 
     # -------------------------
