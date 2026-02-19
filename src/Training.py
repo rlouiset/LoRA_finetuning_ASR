@@ -33,7 +33,6 @@ def train(config: TrainingConfig):
     train_dataset, eval_dataset = load_datasets(config)
 
     collator = WhisperCollatorFast(
-        processor=processor,
         include_filenames=False,
         remove_forbidden_keys=True
     )
