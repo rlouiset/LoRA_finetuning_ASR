@@ -33,6 +33,8 @@ def train(config : TrainingConfig):
     model = prepare_lora_for_training(config, processor)
     model.to(device)
 
+    print('')
+
     print("Using device:", device)
     print("CUDA available:", torch.cuda.is_available())
     print("CUDA device count:", torch.cuda.device_count())
