@@ -5,12 +5,12 @@ import yaml
 ALLOWED_MODULES = [
     "q_proj",
     "q_proj,v_proj",
-    "q_proj,k_proj,v_proj,o_proj"]
-
+    "q_proj,k_proj,v_proj,o_proj"
+]
 
 class TrainingConfig:
     """
-    Central configuration for training a Whisper model with LoRA.
+    Central configuration for training a Whisper model with IA³ adapters.
     Supports YAML loading and CLI overrides.
     """
 
@@ -36,23 +36,21 @@ class TrainingConfig:
         self.num_epochs: int = cfg["training"].get("num_epochs", 30)
         self.test_evaluation: bool = cfg.get("test_evaluation", False)
 
-        # LoRA
-        self.lora_r: int = cfg["lora"].get("rank", 1)
-        self.lora_alpha: float = cfg["lora"].get("alpha", 1.0)
-        self.lora_dropout: float = cfg["lora"].get("dropout", 0.05)
-        self.target_modules: List[str] = cfg["lora"].get("target_modules", ["q_proj", "v_proj"])
-        
-        #Callbacks
-        self.early_stopping_patience: int = cfg["callbacks"].get("early_stopping_patience", 0.05)
-        self.early_stopping_threshold: float = cfg["callbacks"].get("early_stopping_threshold", 0.1)
-        self.lora_alpha: float = cfg["lora"].get("alpha", 1.0)
-        self.lora_dropout: float = cfg["lora"].get("dropout", 0.05)
-        self.target_modules: List[str] = cfg["lora"].get("target_modules", ["q_proj", "v_proj"])
-        
+        # IA³ configuration
+        ia3_cfg = cfg.get("ia3", {})
+        self.ia3_alpha: float = ia3_cfg.get("alpha", 1.0)               # scaling factor
+        self.ia3_dropout: float = ia3_cfg.get("dropout", 0.05)          # dropout for adapters
+        self.target_modules: List[str] = ia3_cfg.get("target_modules", ["q_proj", "v_proj"])
+
+        # Callbacks
+        callbacks_cfg = cfg.get("callbacks", {})
+        self.early_stopping_patience: int = callbacks_cfg.get("early_stopping_patience", 0)
+        self.early_stopping_threshold: float = callbacks_cfg.get("early_stopping_threshold", 0.1)
 
         # WandB
-        self.wandb_key: Optional[str] = cfg["wandb"].get("wandb_key")
-        self.wandb_project: Optional[str] = cfg["wandb"].get("project")
+        wandb_cfg = cfg.get("wandb", {})
+        self.wandb_key: Optional[str] = wandb_cfg.get("wandb_key")
+        self.wandb_project: Optional[str] = wandb_cfg.get("project")
 
     def override(self, **kwargs):
         """
@@ -63,4 +61,8 @@ class TrainingConfig:
                 setattr(self, k, v)
 
     def __repr__(self):
-        return f"<TrainingConfig model={self.whisper_model} batch_size={self.batch_size} lr={self.learning_rate} epochs={self.num_epochs}>"
+        return (
+            f"<TrainingConfig model={self.whisper_model} "
+            f"batch_size={self.batch_size} lr={self.learning_rate} "
+            f"epochs={self.num_epochs} ia3_alpha={self.ia3_alpha}>"
+        )
