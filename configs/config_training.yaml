@@ -9,12 +9,10 @@ training:
  seed: 31
 
 
-#LoRA configuration
-lora:
- rank: 1
- alpha: 1
- dropout: 0.05
- target_modules: ["q_proj","v_proj"]
+ia3:
+  alpha: 1          # scaling factor for IA³
+  dropout: 0.05     # optional dropout for the adapters
+  target_modules: ["q_proj","v_proj"]  # layers to apply IA³ to
 
 #Paths
 paths:

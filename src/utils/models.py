@@ -1,13 +1,18 @@
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
-from peft import PeftModel,get_peft_model, LoraConfig
+from peft import PeftModel, get_peft_model, IA3Config
 
 
 def load_base_model(model_name, processor):
-    """Load the base Whisper model and set generation config."""
+    """
+    Load the base Whisper model and set generation config.
+    """
     model = WhisperForConditionalGeneration.from_pretrained(
-        f"openai/whisper-{model_name}", 
-        device_map="auto"
+        f"openai/whisper-{model_name}",
+        # Use single-GPU / auto device placement
+        device_map=None  # We'll handle device placement in Trainer
     )
+
+    # Set generation config for transcription
     model.generation_config.language = processor.tokenizer.language
     model.generation_config.task = processor.tokenizer.task
     model.generation_config.forced_decoder_ids = processor.get_decoder_prompt_ids(
@@ -17,24 +22,34 @@ def load_base_model(model_name, processor):
 
     return model
 
-def load_lora_model(model_name, processor, lora_path):
-    """Load Whisper model and apply LoRA weights for inference."""
+
+def load_ia3_model(model_name, processor, ia3_path):
+    """
+    Load Whisper base model and apply IA3 adapters for inference.
+    """
     model = load_base_model(model_name, processor)
-    model = PeftModel.from_pretrained(model, lora_path)
+    model = PeftModel.from_pretrained(model, ia3_path)
     return model
 
-def prepare_lora_for_training(config, processor):
-    """Load base model and wrap it with LoRA for fine-tuning."""
-    
-    # Lora Configuration
-    lora_config = LoraConfig(
-        r=config.lora_r,  # Rank 1
-        lora_alpha=config.lora_alpha,  # Scaling factor 
-        target_modules=config.target_modules,  # Attention modules to adapt
-        lora_dropout=config.lora_dropout,  # dropout 
-        bias="none",  # no bias adaptation
-  
+
+def prepare_ia3_for_training(config, processor):
+    """
+    Load base model and wrap it with IA3 adapters for fine-tuning.
+    """
+
+    # IA3 configuration
+    ia3_config = IA3Config(
+        target_modules=config.target_modules,  # e.g., ["q_proj", "v_proj"]
+        lora_alpha=config.lora_alpha,         # scaling factor (IA3 uses same param)
+        dropout=config.lora_dropout,          # dropout for adapters
+        bias="none",                          # no bias adaptation
+        task_type="SEQ_2_SEQ_LM"              # required for Hugging Face seq2seq
     )
+
+    # Load base model
     model = load_base_model(config.whisper_model, processor)
-    model = get_peft_model(model, lora_config)
+
+    # Wrap with IA3 adapters
+    model = get_peft_model(model, ia3_config)
+
     return model
