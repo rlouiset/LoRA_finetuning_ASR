@@ -73,8 +73,7 @@ def train(config: TrainingConfig):
         eval_strategy="epoch",
         logging_strategy="epoch",
         learning_rate=config.learning_rate,
-        bf16=True,                # H100 preferred
-        fp16=False,
+        fp16=True,
         dataloader_num_workers=8,  # adjust for CPU cores
         dataloader_pin_memory=True,
         predict_with_generate=True,
@@ -122,10 +121,10 @@ def train(config: TrainingConfig):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fine-tune Whisper Large with IA³ adapters")
     parser.add_argument("--config", type=str, required=True, help="config yaml")
-    parser.add_argument("--batch_size", type=int, default=None, help="Batch size per device")
-    parser.add_argument("--learning_rate", type=float, default=None, help="Learning rate")
-    parser.add_argument("--num_epochs", type=int, default=None, help="Number of epochs")
-    parser.add_argument("--ia3_alpha", type=float, default=None, help="IA³ scaling factor")
+    parser.add_argument("--batch_size", type=int, default=8, help="Batch size per device")
+    parser.add_argument("--learning_rate", type=float, default=1e-4, help="Learning rate")
+    parser.add_argument("--num_epochs", type=int, default=10, help="Number of epochs")
+    parser.add_argument("--ia3_alpha", type=float, default=1, help="IA³ scaling factor")
     parser.add_argument("--test_evaluation", type=bool, default=None, help="Quick eval on small subset")
 
     args = parser.parse_args()
@@ -139,7 +138,7 @@ if __name__ == "__main__":
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,
         num_epochs=args.num_epochs,
-        lora_alpha=args.ia3_alpha,  # reused for IA³
+        ia3_alpha=args.ia3_alpha,  # reused for IA³
         test_evaluation=args.test_evaluation,
     )
 

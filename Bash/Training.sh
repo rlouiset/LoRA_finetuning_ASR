@@ -22,9 +22,6 @@ PROJECT_ROOT="/home/rlouiset/LoRA_finetuning_ASR"
 # Training
 # -------------------------------
 python "$PROJECT_ROOT/src/Training.py" \
-    --config "$PROJECT_ROOT/configs/config_training.yaml" \
-    --ia3_alpha 1.0 \   # your desired IA³ scaling factor
-    --batch_size 8 \
-    --num_epochs 10
+    --config "$PROJECT_ROOT/configs/config_training.yaml"
 
 echo "Computation ended: $(date)"
