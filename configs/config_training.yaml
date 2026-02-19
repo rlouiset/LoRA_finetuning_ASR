@@ -10,7 +10,6 @@ training:
 
 
 ia3:
-  alpha: 1          # scaling factor for IA³
   dropout: 0.05     # optional dropout for the adapters
   target_modules: ["q_proj","v_proj"]  # layers to apply IA³ to
 

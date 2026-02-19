@@ -38,7 +38,6 @@ class TrainingConfig:
 
         # IA³ configuration
         ia3_cfg = cfg.get("ia3", {})
-        self.alpha: float = ia3_cfg.get("alpha", 1.0)               # scaling factor
         self.dropout: float = ia3_cfg.get("dropout", 0.05)          # dropout for adapters
         self.target_modules: List[str] = ia3_cfg.get("target_modules", ["q_proj", "v_proj"])
 

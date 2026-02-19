@@ -40,7 +40,6 @@ def prepare_ia3_for_training(config, processor):
     # IA3 configuration
     ia3_config = IA3Config(
         target_modules=config.target_modules,  # e.g., ["q_proj", "v_proj"]
-        alpha=config.alpha,         # scaling factor (IA3 uses same param)
         dropout=config.dropout,          # dropout for adapters
         bias="none",                          # no bias adaptation
         task_type="SEQ_2_SEQ_LM"              # required for Hugging Face seq2seq
