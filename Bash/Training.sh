@@ -19,7 +19,7 @@ echo $(python --version)
 set -e 
 
 # Emplacement du script
-PROJECT_ROOT="/home/tleludec/Transcription_whisper/Code/fine-tuning-whisper/Script/"
+PROJECT_ROOT="/home/rlouiset/LoRA_finetuning_ASR"
 
 
 # Construire les chemins absolus
