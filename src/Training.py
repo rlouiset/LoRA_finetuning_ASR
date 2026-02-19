@@ -32,14 +32,14 @@ def train(config : TrainingConfig):
     #Adapt the model with Lora
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = prepare_lora_for_training(config, processor)
-    # model.to(device)
+    model.to(device)
 
     print("Using device:", device)
     print("CUDA available:", torch.cuda.is_available())
     print("CUDA device count:", torch.cuda.device_count())
 
     model.print_trainable_parameters()  # Print trainable parameters
-    model.config.use_cache=True
+    model.config.use_cache=False
     
     # Metrics
     metric=evaluate.load("wer")
@@ -60,7 +60,7 @@ def train(config : TrainingConfig):
         logging_strategy="epoch",
         learning_rate=config.learning_rate,
         fp16=True,
-        dataloader_num_workers=32,  # or more depending on CPU
+        dataloader_num_workers=8,  # or more depending on CPU
         # optionally pin memory
         dataloader_pin_memory=True,
         predict_with_generate=True,
