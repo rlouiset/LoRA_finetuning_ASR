@@ -1,0 +1,16 @@
+#config .yaml to compute features for Training from audio and annotations
+paths:
+ scratch_raw: "/scratch1/data/raw_data/HD_PARK_HOSPITAL/audio/"
+ features_dir: "/home/tleludec/Transcription_whisper/Data/Features_on_disk/large/"
+ train_json: "/home/tleludec/Transcription_whisper/Data/dataset/Train_data.json"
+ eval_json: "/home/tleludec/Transcription_whisper/Data/dataset/Validation_data.json"
+ test_json: "/home/tleludec/Transcription_whisper/Data/dataset/Test_data.json"
+
+whisper:
+ model: "large"
+ language: "French"
+ task: "transcribe"
+
+preprocessing:
+ target_sr: 16000
+

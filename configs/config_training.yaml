@@ -1,0 +1,41 @@
+#Model configuration
+whisper_model: "large"
+
+#Training hyperparameters
+training:
+ batch_size: 8
+ learning_rate: 0.0001
+ num_epochs: 30
+ seed: 31
+
+
+#LoRA configuration
+lora:
+ rank: 1
+ alpha: 1
+ dropout: 0.05
+ target_modules: ["q_proj","v_proj"]
+
+#Paths
+paths:
+ features_dir: "/home/tleludec/Transcription_whisper/Data/Features_on_disk/large/" 
+ output_dir: "checkpoints_lora"
+
+#WandB
+wandb: 
+ project: "fine-tuning-whisper-lora"
+ run_name: "whisper_lora_experiment_2"
+ wandb_key: "13d600e074c23c19f157606badf5f9f381e5537a"
+ 
+ 
+#Callbacks
+callbacks:
+ early_stopping_patience: 3
+ early_stopping_threshold: 0.1 
+
+ 
+#Test
+test_evaluation: FALSE
+
+
+

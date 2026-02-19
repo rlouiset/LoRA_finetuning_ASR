@@ -1,0 +1,17 @@
+#config .yaml to compute features for Training from audio and annotations
+
+#paths features_dir & whisper: the same as in config_training.yaml
+paths:
+ features_dir: "/home/tleludec/Transcription_whisper/Data/Features_on_disk/large/"
+ best_model: "/home/tleludec/Transcription_whisper/Code/fine-tuning-whisper/Script/best_model_lora_rank_1/"
+
+
+whisper:
+ model: "large"
+ language: "French"
+ task: "transcribe"
+ 
+
+
+
+
