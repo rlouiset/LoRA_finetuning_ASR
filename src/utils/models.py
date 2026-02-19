@@ -42,7 +42,6 @@ def prepare_ia3_for_training(config, processor):
         target_modules=config.target_modules,  # e.g., ["q_proj", "v_proj"]
         task_type="SEQ_2_SEQ_LM",              # required for Hugging Face seq2seq
         feedforward_modules=["fc1", "fc2"],           # MLP layers in Whisper
-        ia3_dropout=getattr(config, "ia3_dropout", 0.0),
     )
 
     # Load base model
