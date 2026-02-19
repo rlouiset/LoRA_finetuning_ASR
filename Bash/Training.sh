@@ -10,35 +10,21 @@
 
 module load mbrola/3.3-dev
 
-
 echo "Running via sbatch on $(hostname) on $(date)"
-node=$(hostname -s)
-user=$(whoami)
-echo $(python --version)
+echo "Python version: $(python --version)"
 
-set -e 
+set -e
 
-# Emplacement du script
+# Project root
 PROJECT_ROOT="/home/rlouiset/LoRA_finetuning_ASR"
 
+# -------------------------------
+# Training
+# -------------------------------
+python "$PROJECT_ROOT/src/Training.py" \
+    --config "$PROJECT_ROOT/configs/config_training.yaml" \
+    --ia3_alpha 1.0 \   # your desired IA³ scaling factor
+    --batch_size 8 \
+    --num_epochs 10
 
-# Construire les chemins absolus
-LOG_DIR="$SCRIPT_DIR/logs"
-
-RANKS=(1)
-
-for R in "${RANKS[@]}"; do
-    echo "=============================================="
-    echo "      Training with LoRA rank = $R"
-    echo "=============================================="
-
-    python "$PROJECT_ROOT/src/Training.py" \
-        --config "$PROJECT_ROOT/configs/config_training.yaml" \
-        --lora_rank "$R"
-
-    echo "Fin du training pour le rank $R"
-done
-
-
-
-echo "computation end :$(date)"
+echo "Computation ended: $(date)"
