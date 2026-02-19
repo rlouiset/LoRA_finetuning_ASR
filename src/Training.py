@@ -123,7 +123,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, default=8, help="Batch size per device")
     parser.add_argument("--learning_rate", type=float, default=1e-4, help="Learning rate")
     parser.add_argument("--num_epochs", type=int, default=10, help="Number of epochs")
-    parser.add_argument("--ia3_alpha", type=float, default=1, help="IA³ scaling factor")
+    parser.add_argument("--alpha", type=float, default=1, help="IA³ scaling factor")
     parser.add_argument("--test_evaluation", type=bool, default=None, help="Quick eval on small subset")
 
     args = parser.parse_args()
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,
         num_epochs=args.num_epochs,
-        ia3_alpha=args.ia3_alpha,  # reused for IA³
+        alpha=args.alpha,  # reused for IA³
         test_evaluation=args.test_evaluation,
     )
 
