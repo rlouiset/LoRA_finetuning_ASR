@@ -13,43 +13,6 @@ from utils.models import load_lora_model, load_base_model, prepare_lora_for_trai
 from utils.config import TrainingConfig, ALLOWED_MODULES
 from utils.callbacks import get_callbacks
 
-from dataclasses import dataclass
-from typing import List, Dict
-import torch
-
-@dataclass
-class FastWhisperCollator:
-    processor: any
-    include_filenames: bool = False
-
-    def __call__(self, batch: List[Dict]) -> Dict[str, torch.Tensor]:
-        """
-        batch: list of dicts from your dataset, each containing:
-               - 'input_features': the audio features
-               - 'labels': the transcription text
-        """
-        # Stack audio features
-        input_features = torch.stack([item['input_features'] for item in batch])
-
-        # Encode labels using fast tokenizer call
-        labels = self.processor(
-            [item['labels'] for item in batch],  # batch of strings
-            padding=True,                        # pad to longest
-            truncation=True,
-            return_tensors="pt"
-        )
-
-        # Rename input_ids to labels for Hugging Face Trainer
-        batch_out = {
-            "input_features": input_features,
-            "labels": labels["input_ids"]
-        }
-
-        # Optionally include filenames
-        if self.include_filenames and "filename" in batch[0]:
-            batch_out["filename"] = [item["filename"] for item in batch]
-
-        return batch_out
 
             
 def train(config : TrainingConfig):
@@ -60,14 +23,7 @@ def train(config : TrainingConfig):
     
     # Dataset & collator
     train_dataset, eval_dataset=load_datasets(config)
-
-    # collator = WhisperCollator(processor, include_filenames=False, remove_forbidden_keys=True)
-
-    # Fix pad token to avoid attention mask warning
-    processor.tokenizer.pad_token_id = processor.tokenizer.eos_token_id
-
-    # Create the new collator using the processor
-    collator = FastWhisperCollator(processor, include_filenames=False)
+    collator = WhisperCollator(processor, include_filenames=False, remove_forbidden_keys=True)
 
     print('ok2')
 
@@ -106,7 +62,7 @@ def train(config : TrainingConfig):
         learning_rate=config.learning_rate,
         bf16=True,
         fp16=False,
-        dataloader_num_workers=32,  # or more depending on CPU
+        dataloader_num_workers=16,  # or more depending on CPU
         # optionally pin memory
         dataloader_pin_memory=True,
         predict_with_generate=True,
