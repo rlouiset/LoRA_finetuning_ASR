@@ -41,6 +41,7 @@ def prepare_prefix_for_training(config, processor):
 
     # Prefix tuning configuration
     prefix_config = PrefixTuningConfig(
+        task_type=TaskType.SEQ_2_SEQ_LM,      # Whisper is encoder-decoder
         num_virtual_tokens=20,
         encoder_hidden_size=model.config.d_model
     )
