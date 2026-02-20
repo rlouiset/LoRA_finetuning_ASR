@@ -28,6 +28,17 @@ def load_prefix_model(model_name, processor, prefix_path):
     """
     model = load_base_model(model_name, processor)
     model = PeftModel.from_pretrained(model, prefix_path)
+
+    # Patch generate to accept input_features
+    original_generate = model.generate
+
+    def generate_with_features(*args, **kwargs):
+        if "input_features" not in kwargs and "input_ids" not in kwargs:
+            raise ValueError("Must provide input_features for Whisper generation")
+        return original_generate(*args, **kwargs)
+
+    model.generate = generate_with_features
+
     return model
 
 
@@ -48,6 +59,16 @@ def prepare_prefix_for_training(config, processor):
 
     # Wrap with PEFT prefix adapters
     model = get_peft_model(model, prefix_config)
+
+    # Patch generate for input_features
+    original_generate = model.generate
+
+    def generate_with_features(*args, **kwargs):
+        if "input_features" not in kwargs and "input_ids" not in kwargs:
+            raise ValueError("Must provide input_features for Whisper generation")
+        return original_generate(*args, **kwargs)
+
+    model.generate = generate_with_features
 
     model.print_trainable_parameters()
 
