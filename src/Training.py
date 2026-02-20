@@ -9,7 +9,7 @@ import shutil
 from utils.metrics import normalized_ponctuation, make_compute_metrics
 from utils.seed import set_seed
 from utils.batch_processing import WhisperCollatorFast, WhisperFeaturesDataset, load_datasets
-from utils.models import load_prefix_model, load_base_model, prepare_prefix_for_training
+from utils.models import load_prompt_model, load_base_model, prepare_prompt_for_training
 from utils.config import TrainingConfig, ALLOWED_MODULES
 from utils.callbacks import get_callbacks
 
