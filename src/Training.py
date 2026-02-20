@@ -38,7 +38,7 @@ def train(config: TrainingConfig):
     # -------------------------
     # Model (prefix adapters)
     # -------------------------
-    model = prepare_prefix_for_training(config, processor)
+    model = prepare_prompt_for_training(config, processor)
 
     # Ensure model is on the right device
     if torch.cuda.is_available():
