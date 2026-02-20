@@ -62,5 +62,5 @@ class TrainingConfig:
         return (
             f"<TrainingConfig model={self.whisper_model} "
             f"batch_size={self.batch_size} lr={self.learning_rate} "
-            f"epochs={self.num_epochs} ia3_alpha={self.ia3_alpha}>"
+            f"epochs={self.num_epochs}>"
         )

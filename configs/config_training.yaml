@@ -8,10 +8,6 @@ training:
  num_epochs: 10
  seed: 31
 
-
-ia3:
-  target_modules: ["q_proj","v_proj","fc1","fc2"]  # layers to apply IA³ to
-
 #Paths
 paths:
  features_dir: "/home/tleludec/Transcription_whisper/Data/Features_on_disk/large/" 
