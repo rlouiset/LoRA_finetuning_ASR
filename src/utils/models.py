@@ -1,5 +1,5 @@
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
-from peft import PeftModel, get_peft_model, PrefixTuningConfig, TaskType
+from peft import get_peft_model, PromptTuningConfig, TaskType, PeftModel
 
 
 def load_base_model(model_name, processor):
@@ -22,53 +22,31 @@ def load_base_model(model_name, processor):
     return model
 
 
-def load_prefix_model(model_name, processor, prefix_path):
+def load_prompt_model(model_name, processor, prompt_path):
     """
-    Load Whisper base model and apply Prefix adapters for inference.
+    Load Whisper base model and apply Prompt Tuning adapters for inference.
     """
     model = load_base_model(model_name, processor)
-    model = PeftModel.from_pretrained(model, prefix_path)
-
-    # Patch generate to accept input_features
-    original_generate = model.generate
-
-    def generate_with_features(*args, **kwargs):
-        if "input_features" not in kwargs and "input_ids" not in kwargs:
-            raise ValueError("Must provide input_features for Whisper generation")
-        return original_generate(*args, **kwargs)
-
-    model.generate = generate_with_features
-
+    model = PeftModel.from_pretrained(model, prompt_path)
     return model
 
 
-def prepare_prefix_for_training(config, processor):
+def prepare_prompt_for_training(config, processor):
     """
-    Load base model and wrap it with Prefix Tuning adapters for fine-tuning.
+    Load base model and wrap it with Prompt Tuning adapters for fine-tuning.
     """
 
     # Load base model
     model = load_base_model(config.whisper_model, processor)
 
-    # Prefix tuning configuration
-    prefix_config = PrefixTuningConfig(
-        task_type=TaskType.SEQ_2_SEQ_LM,      # Whisper is encoder-decoder
-        num_virtual_tokens=20,
-        encoder_hidden_size=model.config.d_model
+    # Prompt tuning configuration
+    prompt_config = PromptTuningConfig(
+        task_type=TaskType.SEQ_2_SEQ_LM,  # Whisper is encoder-decoder
+        num_virtual_tokens=50             # number of learnable tokens; can tune
     )
 
-    # Wrap with PEFT prefix adapters
-    model = get_peft_model(model, prefix_config)
-
-    # Patch generate for input_features
-    original_generate = model.generate
-
-    def generate_with_features(*args, **kwargs):
-        if "input_features" not in kwargs and "input_ids" not in kwargs:
-            raise ValueError("Must provide input_features for Whisper generation")
-        return original_generate(*args, **kwargs)
-
-    model.generate = generate_with_features
+    # Wrap model with PEFT prompt adapters
+    model = get_peft_model(model, prompt_config)
 
     model.print_trainable_parameters()
 
