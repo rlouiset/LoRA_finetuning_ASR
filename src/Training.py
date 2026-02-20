@@ -84,12 +84,6 @@ def train(config: TrainingConfig):
         remove_unused_columns=True,
     )
 
-    gen_kwargs = {
-        "decoder_input_ids": torch.tensor(
-            [[model.config.decoder_start_token_id]]
-        )
-    }
-
     # -------------------------
     # Trainer
     # -------------------------
@@ -100,8 +94,7 @@ def train(config: TrainingConfig):
         eval_dataset=eval_dataset,
         data_collator=collator,
         compute_metrics=compute_metrics_fn,
-        callbacks=callbacks,
-        gen_kwargs=gen_kwargs,   # ← ADD THIS
+        callbacks=callbacks
     )
 
     # -------------------------
