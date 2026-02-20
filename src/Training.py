@@ -1,4 +1,4 @@
-# Fine tuning of Whisper Large using IA³ adapters for dysarthric speech (Huntington's disease)
+# Fine tuning of Whisper Large using Prefix adapters for dysarthric speech (Huntington's disease)
 
 import torch
 from transformers import WhisperProcessor, Seq2SeqTrainer, Seq2SeqTrainingArguments
@@ -9,7 +9,7 @@ import shutil
 from utils.metrics import normalized_ponctuation, make_compute_metrics
 from utils.seed import set_seed
 from utils.batch_processing import WhisperCollatorFast, WhisperFeaturesDataset, load_datasets
-from utils.models import load_ia3_model, load_base_model, prepare_ia3_for_training
+from utils.models import load_prefix_model, load_base_model, prepare_prefix_for_training
 from utils.config import TrainingConfig, ALLOWED_MODULES
 from utils.callbacks import get_callbacks
 
@@ -36,9 +36,9 @@ def train(config: TrainingConfig):
         remove_forbidden_keys=True
     )
     # -------------------------
-    # Model (IA³ adapters)
+    # Model (prefix adapters)
     # -------------------------
-    model = prepare_ia3_for_training(config, processor)
+    model = prepare_prefix_for_training(config, processor)
 
     # Ensure model is on the right device
     if torch.cuda.is_available():
@@ -114,11 +114,11 @@ def train(config: TrainingConfig):
     print("Best checkpoint:", best_ckpt)
 
     if best_ckpt is not None:
-        shutil.copytree(best_ckpt, f"best_model_ia3", dirs_exist_ok=True)
+        shutil.copytree(best_ckpt, f"best_model_prefix", dirs_exist_ok=True)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Fine-tune Whisper Large with IA³ adapters")
+    parser = argparse.ArgumentParser(description="Fine-tune Whisper Large with prefix adapters")
     parser.add_argument("--config", type=str, required=True, help="config yaml")
     parser.add_argument("--batch_size", type=int, default=8, help="Batch size per device")
     parser.add_argument("--learning_rate", type=float, default=1e-4, help="Learning rate")
